@@ -1,0 +1,12 @@
+{
+  "project": "TekosQuest",
+  "game_version": "121.6",
+  "entrypoint": "index.html",
+  "sha256_index": "4472bed41e1d4d3f184b049bf5469db087224aa66a9fdd110a7b9ae4f4c05990",
+  "files": [
+    ".gitignore",
+    "README.md",
+    "index.html",
+    "vercel.json"
+  ]
+}
