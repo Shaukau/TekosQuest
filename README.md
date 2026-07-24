@@ -23,3 +23,7 @@ Chaque modification poussée sur la branche `main` déclenchera ensuite un nouve
 ## Sauvegardes
 
 La progression est enregistrée dans le stockage local du navigateur. Elle reste liée au navigateur et au domaine utilisé.
+
+## Branche de test
+
+Cette branche est utilisée pour tester les futures versions avant leur publication.
