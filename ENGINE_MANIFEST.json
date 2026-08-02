@@ -1,0 +1,14 @@
+{
+  "name": "Tekos Quest Engine",
+  "version": "0.1.0",
+  "framework": "Phaser 3",
+  "entrypoint": "index.html",
+  "features": [
+    "modular scenes",
+    "central collision system",
+    "data-driven quests",
+    "legacy save import",
+    "responsive HUD",
+    "Vercel compatible"
+  ]
+}
