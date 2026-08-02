@@ -1,2 +1,2 @@
 import { BaseWorldScene } from "./BaseWorldScene.js";
-export class HomeScene extends BaseWorldScene { constructor() { super("HomeScene"); } }
+export class BackroomScene extends BaseWorldScene { constructor() { super("BackroomScene"); } }

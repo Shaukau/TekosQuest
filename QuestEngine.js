@@ -1,71 +1,43 @@
-import { SaveSystem } from "./SaveSystem.js";
-import { events } from "./EventBus.js";
+const SAVE_KEY = "tekos_quest_engine_save_v1";
+const LEGACY_KEY = "tekos_infraquest_save_v13";
 
-const DEFAULT_STATE = {
-  currentScene: "HomeScene",
-  player: { name: "Tekos", xp: 0, credits: 250 },
-  flags: {
-    prologueStarted: false,
-    metDora: false,
-    metDom: false,
-    sim001Completed: false,
-    diploma: false,
-    careerUnlocked: false
-  },
-  activeQuest: "first_day",
-  completedQuests: [],
-  legacyImported: false
-};
+export class SaveSystem {
+  static load(defaultState) {
+    try {
+      const raw = localStorage.getItem(SAVE_KEY);
+      if (raw) return { ...defaultState, ...JSON.parse(raw) };
 
-class GameState {
-  constructor() {
-    this.data = SaveSystem.load(DEFAULT_STATE);
+      const legacy = localStorage.getItem(LEGACY_KEY);
+      if (legacy) {
+        const old = JSON.parse(legacy);
+        return {
+          ...defaultState,
+          player: {
+            ...defaultState.player,
+            name: old.player?.name || "Tekos",
+            xp: Number(old.xp) || 0,
+            credits: Number(old.credits) || 250
+          },
+          legacyImported: true
+        };
+      }
+    } catch (error) {
+      console.error("Chargement impossible", error);
+    }
+    return structuredClone(defaultState);
   }
 
-  get level() {
-    return Math.min(100, 1 + Math.floor(this.data.player.xp / 250));
+  static save(state) {
+    const payload = {
+      ...state,
+      saveVersion: 1,
+      updatedAt: new Date().toISOString()
+    };
+    localStorage.setItem(SAVE_KEY, JSON.stringify(payload));
   }
 
-  setScene(scene) {
-    this.data.currentScene = scene;
-    this.save();
-  }
-
-  setFlag(name, value = true) {
-    this.data.flags[name] = value;
-    this.save();
-    events.emit("state:changed", this.snapshot());
-  }
-
-  hasFlag(name) {
-    return Boolean(this.data.flags[name]);
-  }
-
-  setQuest(id) {
-    this.data.activeQuest = id;
-    this.save();
-    events.emit("quest:changed", { id });
-  }
-
-  completeQuest(id) {
-    if (!this.data.completedQuests.includes(id)) this.data.completedQuests.push(id);
-    this.save();
-  }
-
-  reward({ xp = 0, credits = 0 }) {
-    this.data.player.xp += xp;
-    this.data.player.credits += credits;
-    this.save();
-    events.emit("state:changed", this.snapshot());
-  }
-
-  save() {
-    SaveSystem.save(this.data);
-  }
-
-  snapshot() {
-    return structuredClone({ ...this.data, level: this.level });
+  static reset() {
+    localStorage.removeItem(SAVE_KEY);
+    location.reload();
   }
 }
-
-export const gameState = new GameState();
